@@ -20,7 +20,7 @@ Android
 
 Add dependency in pubspec.yaml:
 
-​	hybrid_stack_manager:0.0.1
+​	hybrid_stack_manager:0.0.2
 
 After "flutter packages get",you can check the examples within the package to see how to use it.
 
