@@ -5,8 +5,8 @@ author: KyleWong<kang.wang1988@gmail.com>
 homepage: https://github.com/FlutterRepo/hybrid_stack_manager.git
 
 environment:
-  sdk: '>=2.0.0-dev.48.0 <2.0.0'
-
+  sdk: ">=2.0.0-dev.48.0 <3.0.0"
+  flutter: ">=0.3.1 <2.0.0"
 dependencies:
   flutter:
     sdk: flutter
