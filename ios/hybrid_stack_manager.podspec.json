@@ -1,0 +1,33 @@
+{
+  "name": "hybrid_stack_manager",
+  "version": "0.0.1",
+  "summary": "hybrid_stack_manager",
+  "description": "混合栈管理",
+  "homepage": "https://github.com/FlutterRepo/hybrid_stack_manager.git",
+  "license": {
+    "type": "MIT",
+    "file": "LICENSE"
+  },
+  "authors": {
+    "正物": "kang.wang1988@gmail.com"
+  },
+  "platforms": {
+    "ios": "8.0"
+  },
+  "source": {
+    "git": "git@github.com:FlutterRepo/hybrid_stack_manager.git",
+    "tag": "0.0.1"
+  },
+  "source_files": [
+    "Classes",
+    "Classes/*.{h,m}",
+    "Classes/**/*.{h,m}"
+  ],
+  "dependency": [
+    "Flutter"
+  ],
+  "exclude_files": "Classes/Exclude",
+  "resources": "Resources/*",
+  "prefix_header_contents": "",
+  "requires_arc": true
+}

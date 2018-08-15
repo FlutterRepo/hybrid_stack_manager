@@ -1,0 +1,46 @@
+group 'com.taobao.hybridstackmanager'
+version '1.0-SNAPSHOT'
+
+buildscript {
+    repositories {
+        google()
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:2.3.0'
+    }
+}
+
+rootProject.allprojects {
+    repositories {
+        google()
+        jcenter()
+    }
+}
+
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion = 24
+    buildToolsVersion = "26.0.2"
+    defaultConfig {
+        minSdkVersion 14
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    lintOptions {
+        disable 'InvalidPackage'
+        abortOnError false
+    }
+}
+
+
+// publish到aar的版本按下列顺序读取
+// 1、从gradlew命令的参数中读取
+// 2、从flutter工程根目录下的sync_tools的android_aar_version_config配置中读取
+// 3、从下面ext中读取
+ext {
+    groupId = 'com.taobao.hybridstackmanager'
+    artifactId = "hybridstackmanager"
+    version '1.0.1-SNAPSHOT'
+}
