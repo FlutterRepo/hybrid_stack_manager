@@ -14,9 +14,9 @@ public class MainActivity extends Activity implements XURLRouterHandler {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    XURLRouter.setAppContext(getApplicationContext());
+    XURLRouter.sharedInstance().setAppContext(getApplicationContext());
     setContentView(R.layout.placeholder);
-    setTitle("Native根页面");
+    setTitle("Native Root Page");
     setupOperationBtns();
     setupNativeOpenUrlHandler();
   }
@@ -25,20 +25,20 @@ public class MainActivity extends Activity implements XURLRouterHandler {
     LinearLayout layout = findViewById(R.id.native_root);
     final Button btn=new Button(this);
     btn.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-    btn.setText("点击跳转Flutter");
+    btn.setText("Click to jump Flutter");
     btn.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
         HashMap<String,Object> m = new HashMap<String,Object>();
         m.put("flutter",true);
-        XURLRouter.openUrlWithQueryAndParams("hrd://fdemo",m,null);
+        XURLRouter.sharedInstance().openUrlWithQueryAndParams("hrd://fdemo",m,null);
 
       }
     });
     layout.addView(btn);
   }
   void setupNativeOpenUrlHandler(){
-    XURLRouter.setNativeRouterHandler(this);
+    XURLRouter.sharedInstance().setNativeRouterHandler(this);
   }
   public Class openUrlWithQueryAndParams(String url, HashMap query, HashMap params){
     Uri tmpUri = Uri.parse(url);

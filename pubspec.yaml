@@ -1,6 +1,6 @@
 name: hybrid_stack_manager
 description: Hybrid stack management when using Flutter and Native(iOS/Android) simutaneously.
-version: 0.0.2
+version: 0.0.3
 author: KyleWong<kang.wang1988@gmail.com>
 homepage: https://github.com/FlutterRepo/hybrid_stack_manager.git
 

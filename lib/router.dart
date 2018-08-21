@@ -56,8 +56,7 @@ class Router extends Object {
     });
   }
   popToRoot() {
-    NavigatorState navState =
-    Navigator.of(globalKeyForRouter.currentContext);
+    NavigatorState navState = Navigator.of(globalKeyForRouter.currentContext);
     List<Route<dynamic>> navHistory = navState.history;
     int histLen = navHistory.length;
     for (int i = histLen - 1; i >= 1; i--) {
@@ -67,8 +66,7 @@ class Router extends Object {
   }
 
   popToRouteNamed(String routeName) {
-    NavigatorState navState =
-    Navigator.of(globalKeyForRouter.currentContext);
+    NavigatorState navState = Navigator.of(globalKeyForRouter.currentContext);
     List<Route<dynamic>> navHistory = navState.history;
     int histLen = navHistory.length;
     for (int i = histLen - 1; i >= 1; i--) {
@@ -83,8 +81,7 @@ class Router extends Object {
   }
 
   popRouteNamed(String routeName) {
-    NavigatorState navState =
-    Navigator.of(globalKeyForRouter.currentContext);
+    NavigatorState navState = Navigator.of(globalKeyForRouter.currentContext);
     List<Route<dynamic>> navHistory = navState.history;
     int histLen = navHistory.length;
     for (int i = histLen - 1; i >= 1; i--) {
@@ -99,7 +96,7 @@ class Router extends Object {
 
   pushPageWithOptionsFromFlutter({RouterOption routeOption, bool animated}) {
     Widget page =
-    Router.sharedInstance().pageFromOption(routeOption: routeOption);
+        Router.sharedInstance().pageFromOption(routeOption: routeOption);
     if (page != null) {
       XMaterialPageRoute pageRoute = new XMaterialPageRoute(
           settings: new RouteSettings(name: routeOption.userInfo),
@@ -108,10 +105,7 @@ class Router extends Object {
             return page;
           });
 
-
-      Navigator
-          .of(globalKeyForRouter.currentContext)
-          .push(pageRoute);
+      Navigator.of(globalKeyForRouter.currentContext).push(pageRoute);
       HybridStackManagerPlugin.hybridStackManagerPlugin
           .updateCurFlutterRoute(routeOption.userInfo);
     } else {
@@ -120,8 +114,7 @@ class Router extends Object {
           query: routeOption.query,
           params: routeOption.params);
     }
-    NavigatorState navState =
-    Navigator.of(globalKeyForRouter.currentContext);
+    NavigatorState navState = Navigator.of(globalKeyForRouter.currentContext);
     List<Route<dynamic>> navHistory = navState.history;
   }
 
@@ -136,11 +129,10 @@ class Router extends Object {
   pageFromOption({RouterOption routeOption, Key key}) {
     try {
       currentPageUrl = routeOption.url + "?" + converUrl(routeOption.query);
-    } catch (e) {
-    }
+    } catch (e) {}
     routeOption.userInfo = Utils.generateUniquePageName(routeOption.url);
-    if(routerWidgetHandler!=null)
-      return routerWidgetHandler(routeOption:routeOption,key:key);
+    if (routerWidgetHandler != null)
+      return routerWidgetHandler(routeOption: routeOption, key: key);
   }
 
   static String converUrl(Map query) {

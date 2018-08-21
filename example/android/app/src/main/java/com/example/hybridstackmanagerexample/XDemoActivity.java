@@ -14,24 +14,23 @@ public class XDemoActivity extends Activity{
     static int sNativeActivityIdx = 0;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        XURLRouter.setAppContext(getApplicationContext());
         setContentView(R.layout.placeholder);
         setupOperationBtns();
         sNativeActivityIdx++;
-        setTitle(String.format("Native Demo页面(%d)",sNativeActivityIdx));
+        setTitle(String.format("Native Demo Page(%d)",sNativeActivityIdx));
     }
 
     void setupOperationBtns(){
         LinearLayout layout = findViewById(R.id.native_root);
         Button btn=new Button(this);
         btn.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        btn.setText("点击跳转Flutter");
+        btn.setText("Click to jump Flutter");
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 HashMap<String,Object> m = new HashMap<String,Object>();
                 m.put("flutter",true);
-                XURLRouter.openUrlWithQueryAndParams("hrd://fdemo",m,null);
+                XURLRouter.sharedInstance().openUrlWithQueryAndParams("hrd://fdemo",m,null);
 
             }
         });
@@ -39,11 +38,11 @@ public class XDemoActivity extends Activity{
 
         btn=new Button(this);
         btn.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        btn.setText("点击跳转Native");
+        btn.setText("Click to jump native");
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                XURLRouter.openUrlWithQueryAndParams("hrd://ndemo",null,null);
+                XURLRouter.sharedInstance().openUrlWithQueryAndParams("hrd://ndemo",null,null);
 
             }
         });

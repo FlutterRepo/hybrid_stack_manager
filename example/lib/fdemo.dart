@@ -40,7 +40,7 @@ class FDemoWidget extends StatelessWidget {
             children: <Widget>[
               new SizedBox(width: 1.0, height: 100.0),
               new GestureDetector(
-                child: new Text("点击打开FlutterPage"),
+                child: new Text("Click to open FlutterPage"),
                 onTap: () {
                   HybridStackManagerPlugin.hybridStackManagerPlugin
                       .openUrlFromNative(
@@ -49,7 +49,7 @@ class FDemoWidget extends StatelessWidget {
               ),
               new SizedBox(width: 1.0, height: 100.0),
               new GestureDetector(
-                child: new Text("点击打开NativePage"),
+                child: new Text("Click to open NativePage"),
                 onTap: () {
                   HybridStackManagerPlugin.hybridStackManagerPlugin
                       .openUrlFromNative(url: "hrd://ndemo");

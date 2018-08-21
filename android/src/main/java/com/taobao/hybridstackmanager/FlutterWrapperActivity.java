@@ -328,7 +328,7 @@ public class FlutterWrapperActivity extends Activity implements PluginRegistry,V
             for(String key : tmpUri.getQueryParameterNames()){
                 query.put(key,tmpUri.getQueryParameter(key));
             }
-            XURLRouter.openUrlWithQueryAndParams(tmpUrl,query,null);
+            XURLRouter.sharedInstance().openUrlWithQueryAndParams(tmpUrl,query,null);
             saveFinishSnapshot(false);
         }
     }

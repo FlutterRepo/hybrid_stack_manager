@@ -5,7 +5,6 @@
 #import "XDemoController.h"
 
 @interface AppDelegate(UIGestureRecognizerDelegate)
-
 @end
 
 @implementation AppDelegate
@@ -23,13 +22,13 @@
 }
 
 - (void)setupNativeOpenUrlHandler{
-    sNativeOpenUrlHandler = ^UIViewController *(NSString *url,NSDictionary *query,NSDictionary *params){
+    [[XURLRouter sharedInstance] setNativeOpenUrlHandler:^UIViewController *(NSString *url,NSDictionary *query,NSDictionary *params){
         NSURL *tmpUrl = [NSURL URLWithString:url];
         if([@"ndemo" isEqualToString:tmpUrl.host]){
             return [XDemoController new];
         }
         return nil;
-    };
+    }];
 }
 
 #pragma mark - UIGestureRecognizerDelegate

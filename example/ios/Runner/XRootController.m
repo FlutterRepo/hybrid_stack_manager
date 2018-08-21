@@ -17,7 +17,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.title = @"Native根页面";
+    self.title = @"Native root page";
     // Do any additional setup after loading the view.
 }
 
@@ -25,7 +25,7 @@
     UIView *view = [[UIView alloc] initWithFrame:[UIScreen mainScreen].bounds];
     [view setBackgroundColor:[UIColor whiteColor]];
     UIButton *btn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 200, 40)];
-    [btn setTitle:@"点击跳转Flutter" forState:UIControlStateNormal];
+    [btn setTitle:@"Click to jump Flutter" forState:UIControlStateNormal];
     [view addSubview:btn];
     [btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     [btn setCenter:view.center];

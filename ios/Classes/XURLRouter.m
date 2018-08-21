@@ -9,7 +9,16 @@
 #import "XURLRouter.h"
 #import "XFlutterModule.h"
 
-NativeOpenUrlHandler sNativeOpenUrlHandler = nil;
+@implementation XURLRouter
++ (instancetype)sharedInstance{
+    static XURLRouter *sInstance;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        sInstance = [XURLRouter new];
+    });
+    return sInstance;
+}
+@end
 
 void XOpenURLWithQueryAndParams(NSString *url,NSDictionary *query,NSDictionary *params){
     NSURL *tmpUrl = [NSURL URLWithString:url];
@@ -20,9 +29,10 @@ void XOpenURLWithQueryAndParams(NSString *url,NSDictionary *query,NSDictionary *
         [[XFlutterModule sharedInstance] openURL:url query:query params:params];
         return;
     }
-    if(sNativeOpenUrlHandler!=nil)
+    NativeOpenUrlHandler handler = [XURLRouter sharedInstance].nativeOpenUrlHandler;
+    if(handler!=nil)
     {
-        UIViewController *vc = sNativeOpenUrlHandler(url,query,params);
+        UIViewController *vc = handler(url,query,params);
         if(vc!=nil)
             [rootNav pushViewController:vc animated:YES];
     }

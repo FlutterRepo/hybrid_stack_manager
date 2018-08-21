@@ -10,6 +10,9 @@
 #define kOpenUrlPrefix  @"hrd"
 
 typedef UIViewController* (^NativeOpenUrlHandler)(NSString *,NSDictionary *,NSDictionary *);
-extern NativeOpenUrlHandler sNativeOpenUrlHandler;
-
 void XOpenURLWithQueryAndParams(NSString *url,NSDictionary *query,NSDictionary *params);
+
+@interface XURLRouter : NSObject
+@property (nonatomic,weak) NativeOpenUrlHandler nativeOpenUrlHandler;
++ (instancetype)sharedInstance;
+@end

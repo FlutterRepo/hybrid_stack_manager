@@ -5,3 +5,9 @@
 ## [0.0.2] - 2018-08-15
 
 * Change environment support(sdk&flutter)
+
+## [0.0.3] - 2018-08-21
+
+* Add License
+* Process an AssertError when using flutter v0.5.8+
+* Change all display tet into English

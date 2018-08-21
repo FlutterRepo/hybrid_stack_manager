@@ -19,7 +19,7 @@ static NSInteger sNativeVCIdx = 0;
 - (void)viewDidLoad {
     [super viewDidLoad];
     sNativeVCIdx++;
-    NSString *title = [NSString stringWithFormat:@"Native Demo页面(%ld)",(long)sNativeVCIdx];
+    NSString *title = [NSString stringWithFormat:@"Native demo page(%ld)",(long)sNativeVCIdx];
     self.title = title;
     // Do any additional setup after loading the view.
 }
@@ -33,14 +33,14 @@ static NSInteger sNativeVCIdx = 0;
     UIView *view = [[UIView alloc] initWithFrame:[UIScreen mainScreen].bounds];
     [view setBackgroundColor:[UIColor whiteColor]];
     UIButton *btn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 200, 40)];
-    [btn setTitle:@"点击跳转Native" forState:UIControlStateNormal];
+    [btn setTitle:@"Click to jump Native" forState:UIControlStateNormal];
     [view addSubview:btn];
     [btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     [btn setCenter:CGPointMake(view.center.x, view.center.y-50)];
     [btn addTarget:self action:@selector(onJumpNativePressed) forControlEvents:UIControlEventTouchUpInside];
     
     btn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 200, 40)];
-    [btn setTitle:@"点击跳转Flutter" forState:UIControlStateNormal];
+    [btn setTitle:@"Click to jump Flutter" forState:UIControlStateNormal];
     [view addSubview:btn];
     [btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     [btn setCenter:CGPointMake(view.center.x, view.center.y+50)];

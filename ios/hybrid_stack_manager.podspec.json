@@ -1,6 +1,6 @@
 {
   "name": "hybrid_stack_manager",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "summary": "hybrid_stack_manager",
   "description": "混合栈管理",
   "homepage": "https://github.com/FlutterRepo/hybrid_stack_manager.git",
@@ -16,7 +16,7 @@
   },
   "source": {
     "git": "git@github.com:FlutterRepo/hybrid_stack_manager.git",
-    "tag": "0.0.2"
+    "tag": "0.0.3"
   },
   "source_files": [
     "Classes",

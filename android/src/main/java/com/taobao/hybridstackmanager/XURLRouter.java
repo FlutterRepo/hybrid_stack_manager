@@ -6,16 +6,23 @@ import android.net.Uri;
 import java.util.HashMap;
 
 public class XURLRouter {
-    static String kOpenUrlPrefix = "hrd";
-    static Context mAppContext;
-    static XURLRouterHandler mNativeRouterHandler;
-    public static void setAppContext(Context context){
+    final static String kOpenUrlPrefix = "hrd";
+    static XURLRouter sRouterInst;
+    Context mAppContext;
+    XURLRouterHandler mNativeRouterHandler;
+    public static XURLRouter sharedInstance(){
+        if(sRouterInst==null){
+            sRouterInst = new XURLRouter();
+        }
+        return sRouterInst;
+    }
+    public void setAppContext(Context context){
         mAppContext = context;
     }
-    public static void setNativeRouterHandler(XURLRouterHandler handler){
+    public void setNativeRouterHandler(XURLRouterHandler handler){
         mNativeRouterHandler = handler;
     }
-    public static boolean openUrlWithQueryAndParams(String url, HashMap query, HashMap params){
+    public boolean openUrlWithQueryAndParams(String url, HashMap query, HashMap params){
         Uri tmpUri = Uri.parse(url);
         if(!kOpenUrlPrefix.equals(tmpUri.getScheme()))
             return false;

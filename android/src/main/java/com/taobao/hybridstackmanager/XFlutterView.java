@@ -66,7 +66,12 @@ public class XFlutterView extends FlutterView
                     Field privateField1 = FlutterView.class.getDeclaredField("mNativeView");
                     privateField1.setAccessible(true);
                     FlutterNativeView mNativeView = (FlutterNativeView)privateField1.get(this);
-                    mNativeView.attachViewAndActivity(this, activity);
+                    try {
+                        mNativeView.attachViewAndActivity(this, activity);
+                    }
+                    catch (AssertionError ae){
+                        System.out.println("In new implementation for FlutterPluginRegistry,AssertionError is thrown when try to attach twice, it doesn't matter even we ignore it.");
+                    }
 
                     Field privateField2 = FlutterView.class.getDeclaredField("mActivityLifecycleListeners");
                     privateField2.setAccessible(true);
