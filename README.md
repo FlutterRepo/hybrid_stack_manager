@@ -20,7 +20,7 @@ Android
 
 Add dependency in pubspec.yaml:
 
-	hybrid_stack_manager:0.0.3
+	hybrid_stack_manager:0.0.4
 
 After getting the package using "flutter packages get",you can check the examples within the package to see how to use it.
 
@@ -70,7 +70,7 @@ XURLRouter.sharedInstance().setAppContext(getApplicationContext());
 2.Set XURLRouter's NativeRouterHandler with one always existing instance. This instance should implements XURLRouterHandler and implement method:openUrlWithQueryAndParams where you can implement your own business related router logic，as below:
 ```
   void setupNativeOpenUrlHandler(){
-    XURLRouter.setNativeRouterHandler(this);
+    XURLRouter.sharedInstance().setNativeRouterHandler(this);
   }
   public Class openUrlWithQueryAndParams(String url, HashMap query, HashMap params){
     Uri tmpUri = Uri.parse(url);

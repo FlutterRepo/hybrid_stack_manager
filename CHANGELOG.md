@@ -11,3 +11,6 @@
 * Add License
 * Process an AssertError when using flutter v0.5.8+
 * Change all display tet into English
+
+## [0.0.4] - 2018-08-21
+* Change README.
