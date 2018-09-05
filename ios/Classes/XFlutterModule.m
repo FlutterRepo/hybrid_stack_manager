@@ -80,14 +80,23 @@
     FlutterMethodChannel *methodChann = [HybridStackManager sharedInstance].methodChannel;
     NSMutableDictionary *arguments = [NSMutableDictionary dictionary];
     [arguments setValue:pageUrl forKey:@"url"];
-    [arguments setValue:mQuery forKey:@"query"];
+    
+    NSMutableDictionary *mutQuery = [NSMutableDictionary dictionary];
+    for(NSString *key in query.allKeys){
+        id value = [query objectForKey:key];
+        //[TODO]: Add customized implementations for non-json-serializable objects into json-serializable ones.
+        [mutQuery setValue:value forKey:key];
+    }
+    [arguments setValue:mutQuery forKey:@"query"];
+    
     NSMutableDictionary *mutParams = [NSMutableDictionary dictionary];
     for(NSString *key in mParams.allKeys){
         id value = [mParams objectForKey:key];
-        id jsonValue = [NSJSONSerialization dataWithJSONObject:params options:NSJSONWritingPrettyPrinted error:nil];
-        [mutParams setValue:jsonValue forKey:key];
+        //[TODO]: Add customized implementations for non-json-serializable objects into json-serializable ones.
+        [mutParams setValue:value forKey:key];
     }
     [arguments setValue:mutParams forKey:@"params"];
+    
     [arguments setValue:@(0) forKey:@"animated"];
     
     //Push
