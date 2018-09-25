@@ -17,3 +17,6 @@
 
 ## [0.0.5] - 2018-09-05
 * Add TODO where developers may need to add their customized implementations for non-json-serializable objects into json-serializable ones.
+
+## [0.0.6] - 2018-09-25
+* Repository relocated.
