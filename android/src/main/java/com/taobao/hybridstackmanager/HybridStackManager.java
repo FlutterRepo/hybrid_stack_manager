@@ -48,8 +48,7 @@ public class HybridStackManager implements MethodCallHandler {
         }
 
         HashMap tmpParams = new HashMap();
-        if (params != null) { tmpQuery.putAll(params); }
-
+        if (params != null) { tmpParams.putAll(params); }
         if (tmpUrl != null) { arguments.put("url", tmpUrl); }
         if (tmpQuery != null) { arguments.put("query", tmpQuery); }
         if (tmpParams != null) { arguments.put("params", tmpParams); }
@@ -64,9 +63,13 @@ public class HybridStackManager implements MethodCallHandler {
             for (Object key : query.keySet()) {
                 Object value = query.get(key);
                 if (value != null) {
-                    final String str;
-                    str = value.toString();
-                    builder.appendQueryParameter(String.valueOf(key),str);
+                    builder.appendQueryParameter(String.valueOf(key), value.toString());
+                }
+            }
+            for (Object key : params.keySet()) {
+                Object value = params.get(key);
+                if (value != null) {
+                    builder.appendQueryParameter(String.valueOf(key), value.toString());
                 }
             }
         }

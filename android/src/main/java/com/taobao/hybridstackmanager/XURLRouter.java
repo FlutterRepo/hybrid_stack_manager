@@ -30,6 +30,7 @@ public class XURLRouter {
             Intent intent = new Intent(mAppContext,FlutterWrapperActivity.class);
             intent.setData(Uri.parse(url));
             intent.setAction(Intent.ACTION_VIEW);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             mAppContext.startActivity(intent);
             return true;
         }

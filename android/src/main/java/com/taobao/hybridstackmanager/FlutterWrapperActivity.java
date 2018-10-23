@@ -19,6 +19,8 @@ import com.taobao.hybridstackmanager.XFlutterActivityDelegate.ViewFactory;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.Set;
+
 import io.flutter.plugin.common.PluginRegistry;
 import io.flutter.view.FlutterNativeView;
 import io.flutter.view.FlutterView;
@@ -145,12 +147,15 @@ public class FlutterWrapperActivity extends Activity implements PluginRegistry,V
         //Process Intent Extra
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
-        Uri uri = intent.getData();
-        if(uri!=null){
-            HybridStackManager.sharedInstance().openUrlFromFlutter(uri.toString(),null,null);
+        HashMap params = new HashMap();
+        if (bundle != null) {
+            params = (HashMap) bundle.get("params");
         }
-        else if(bundle!=null){
-            HybridStackManager.sharedInstance().openUrlFromFlutter(intent.getStringExtra("url"),(HashMap)intent.getSerializableExtra("query"),(HashMap)intent.getSerializableExtra("params"));
+        Uri uri = intent.getData();
+        if (uri != null) {
+            HybridStackManager.sharedInstance().openUrlFromFlutter(uri.toString(), null, params);
+        } else if (bundle != null) {
+            HybridStackManager.sharedInstance().openUrlFromFlutter(intent.getStringExtra("url"), (HashMap) intent.getSerializableExtra("query"), (HashMap) intent.getSerializableExtra("params"));
         }
         flutterWrapperInstCnt++;
     }
@@ -319,11 +324,22 @@ public class FlutterWrapperActivity extends Activity implements PluginRegistry,V
             Intent intent = new Intent(FlutterWrapperActivity.this, FlutterWrapperActivity.class);
             intent.setAction(Intent.ACTION_RUN);
             intent.setData(Uri.parse(url));
-            this.innerStartActivity(intent,true);
-        }
-        else{
             Uri tmpUri = Uri.parse(url);
-            String tmpUrl = String.format("%s://%s",tmpUri.getScheme(),tmpUri.getHost());
+            Set<String> set;
+            HashMap<String,String> params = new HashMap<>();
+            if (tmpUri!= null){
+                set = tmpUri.getQueryParameterNames();
+                if (null != set){
+                    for (String key : tmpUri.getQueryParameterNames()){
+                        params.put(key,tmpUri.getQueryParameter(key));
+                    }
+                }
+                intent.putExtra("params", params);
+            }
+            this.innerStartActivity(intent, true);
+        } else {
+            Uri tmpUri = Uri.parse(url);
+            String tmpUrl = String.format("%s://%s", tmpUri.getScheme(), tmpUri.getHost());
             HashMap query = new HashMap();
             for(String key : tmpUri.getQueryParameterNames()){
                 query.put(key,tmpUri.getQueryParameter(key));
@@ -337,7 +353,6 @@ public class FlutterWrapperActivity extends Activity implements PluginRegistry,V
         this.startActivity(intent);
         saveFinishSnapshot(showSnapshot);
     }
-
 
     @Override
     public void setCurFlutterRouteName(String curFlutterRouteName){
