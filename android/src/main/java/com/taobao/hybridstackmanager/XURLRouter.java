@@ -29,6 +29,7 @@ public class XURLRouter {
         if(query!=null && query.containsKey("flutter") && (Boolean) query.get("flutter")){
             Intent intent = new Intent(mAppContext,FlutterWrapperActivity.class);
             intent.setData(Uri.parse(url));
+            intent.putExtra("params", params);
             intent.setAction(Intent.ACTION_VIEW);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             mAppContext.startActivity(intent);
