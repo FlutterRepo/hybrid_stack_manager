@@ -1,8 +1,9 @@
+*.iml
+.gradle
+/local.properties
+/.idea
 .DS_Store
-.dart_tool/
-
-.packages
-.pub/
+/build
+/captures
 pubspec.lock
-
-build/
+.packages
