@@ -3,7 +3,7 @@ import android.os.Build;
 
 public class FlutterUtils {
     public static boolean isSupportFlutter(){
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
             //Flutter supports android with apilevel 16 and above.
             return true;
         } else{

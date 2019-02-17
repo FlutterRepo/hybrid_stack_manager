@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.taobao.hybridstackmanager.XFlutterActivityDelegate.ViewFactory;
+import com.taobao.hybridstackmanager.report.DataReportManager;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -26,7 +28,7 @@ import io.flutter.view.FlutterNativeView;
 import io.flutter.view.FlutterView;
 
 
-public class FlutterWrapperActivity extends Activity implements PluginRegistry,ViewFactory,FlutterView.Provider, FlutterActivityChecker {
+public class FlutterWrapperActivity extends Activity implements PluginRegistry, ViewFactory, FlutterView.Provider, FlutterActivityChecker {
     private static XFlutterActivityDelegate delegate;
     private static XFlutterView flutterView;
     private static FlutterNativeView nativeView;
@@ -34,18 +36,19 @@ public class FlutterWrapperActivity extends Activity implements PluginRegistry,V
     private PluginRegistry pluginRegistry;
     private boolean isActive;
     private String curFlutterRouteName;
-    private static int flutterWrapperInstCnt=0;
+    private static int flutterWrapperInstCnt = 0;
     //Flutter Activity Related Work
     private ImageView fakeSnapImgView;
     private Bitmap lastbitmap;
     private String pageName = "";
     private HashMap spm = null;
+    private String mCurrentPageUrl = "";
 
-    public void setPageName(String pageName){
+    public void setPageName(String pageName) {
         this.pageName = pageName;
     }
 
-    public void setSpm(HashMap spm){
+    public void setSpm(HashMap spm) {
         this.spm = spm;
     }
 
@@ -67,9 +70,9 @@ public class FlutterWrapperActivity extends Activity implements PluginRegistry,V
      */
     @Override
     public XFlutterView createFlutterView(Context context) {
-        if(flutterView!=null)
+        if (flutterView != null)
             return flutterView;
-        flutterView = new XFlutterView(this,null,createFlutterNativeView());
+        flutterView = new XFlutterView(this, null, createFlutterNativeView());
         return flutterView;
     }
 
@@ -82,13 +85,13 @@ public class FlutterWrapperActivity extends Activity implements PluginRegistry,V
      */
     @Override
     public FlutterNativeView createFlutterNativeView() {
-        if(nativeView!=null)
+        if (nativeView != null)
             return nativeView;
         nativeView = new FlutterNativeView(this.getApplicationContext());
         return nativeView;
     }
 
-    private boolean isFlutterViewAttachedOnMe(){
+    private boolean isFlutterViewAttachedOnMe() {
         FrameLayout rootView = (FrameLayout) findViewById(R.id.flutter_rootview);
         XFlutterView flutterView = getFlutterView();
         ViewGroup priorParent = (ViewGroup) flutterView.getParent();
@@ -104,25 +107,27 @@ public class FlutterWrapperActivity extends Activity implements PluginRegistry,V
     public final <T> T valuePublishedByPlugin(String pluginKey) {
         return pluginRegistry.valuePublishedByPlugin(pluginKey);
     }
+
     @Override
     public final Registrar registrarFor(String pluginKey) {
         return pluginRegistry.registrarFor(pluginKey);
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        boolean firstLaunch = (nativeView==null?true:false);
+        boolean firstLaunch = (nativeView == null ? true : false);
 
         super.onCreate(savedInstanceState);
         checkIfInitActivityDelegate();
         eventDelegate.onCreate(savedInstanceState);
 
-        if(firstLaunch){
+        if (firstLaunch) {
             eventDelegate.runFlutterBundle();
             Class<?> c = null;
             try {
                 c = Class.forName("io.flutter.plugins.GeneratedPluginRegistrant");
-                Method method = c.getMethod("registerWith",PluginRegistry.class);
-                method.invoke(null,pluginRegistry);
+                Method method = c.getMethod("registerWith", PluginRegistry.class);
+                method.invoke(null, pluginRegistry);
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             } catch (NoSuchMethodException e) {
@@ -132,12 +137,11 @@ public class FlutterWrapperActivity extends Activity implements PluginRegistry,V
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
-        }
-        else{
+        } else {
             try {
                 flutterView.registerReceiver();
-            }catch (Exception e){
-                Log.e( "FlutterWrapperActivity ","onCreate flutterView.registerReceiver error" );
+            } catch (Exception e) {
+                Log.e("FlutterWrapperActivity ", "onCreate flutterView.registerReceiver error");
             }
         }
         setContentView(R.layout.flutter_layout);
@@ -158,6 +162,15 @@ public class FlutterWrapperActivity extends Activity implements PluginRegistry,V
             HybridStackManager.sharedInstance().openUrlFromFlutter(intent.getStringExtra("url"), (HashMap) intent.getSerializableExtra("query"), (HashMap) intent.getSerializableExtra("params"));
         }
         flutterWrapperInstCnt++;
+        //临时增加数据上报逻辑
+        if (uri != null) {
+            String pageName = uri.getHost();
+            HashMap<String, String> reportParams = new HashMap<>();
+            reportParams.put("page", pageName);
+            reportParams.put("event", "kingofpron_page_show");
+            reportParams.put("from_page", XURLRouter.sRecentPages[0]);
+            DataReportManager.getInstance().reportData(reportParams);
+        }
     }
 
 
@@ -166,12 +179,12 @@ public class FlutterWrapperActivity extends Activity implements PluginRegistry,V
         super.onResume();
         fakeSnapImgView.setVisibility(View.GONE);
         checkIfAddFlutterView();
-        if(isFlutterViewAttachedOnMe())
+        if (isFlutterViewAttachedOnMe())
             eventDelegate.onResume();
         HybridStackManager.sharedInstance().curFlutterActivity = this;
         isActive = true;
-        if(lastbitmap!=null && curFlutterRouteName!=null && curFlutterRouteName.length()>0 ){
-            HybridStackManager.sharedInstance().methodChannel.invokeMethod("popToRouteNamed",curFlutterRouteName);
+        if (curFlutterRouteName != null && curFlutterRouteName.length() > 0) {
+            HybridStackManager.sharedInstance().methodChannel.invokeMethod("popToRouteNamed", curFlutterRouteName);
         }
     }
 
@@ -187,34 +200,46 @@ public class FlutterWrapperActivity extends Activity implements PluginRegistry,V
     protected void onDestroy() {
 //        eventDelegate.onDestroy();
         flutterWrapperInstCnt--;
-        if(flutterWrapperInstCnt==0){
-            HybridStackManager.sharedInstance().methodChannel.invokeMethod("popToRoot",null);
+        if (flutterWrapperInstCnt == 0) {
+            HybridStackManager.sharedInstance().methodChannel.invokeMethod("popToRoot", null);
         }
         isActive = false;
         try {
             destorybitmap();
             flutterView.unregisterReceiver();
-        }catch (Exception e){
-            Log.e( "FlutterWrapperActivity ","onDestroy flutterView.unregisterReceiver error" );
+        } catch (Exception e) {
+            Log.e("FlutterWrapperActivity ", "onDestroy flutterView.unregisterReceiver error");
         }
         super.onDestroy();
     }
 
     @Override
     public void onBackPressed() {
-        popCurActivity();
+        Log.d("giao", "--onBackPressed--");
+        Log.d("giao", XURLRouter.sActivityToFlutterPageName.get(this));
+        if (!XURLRouter.sReusingMode) {
+            if (XURLRouter.sFlutterPageNameNeedingBlockOnBackPressed.contains(XURLRouter.sActivityToFlutterPageName.get(this))) {
+                HybridStackManager.sharedInstance().methodChannel.invokeMethod("pleaseHandleOnBackPressed", XURLRouter.sActivityToFlutterPageName.get(this));
+                //这里暂时不移除
+                //XURLRouter.sFlutterPageNameNeedingBlockOnBackPressed.remove(XURLRouter.sActivityToFlutterPageName.get(this));
+            } else {
+                popCurActivity();
+            }
+        } else {
+            HybridStackManager.sharedInstance().methodChannel.invokeMethod("reusingModeOnBackPressed", null);
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        if(isFlutterViewAttachedOnMe())
+        if (isFlutterViewAttachedOnMe())
             eventDelegate.onPause();
         isActive = false;
     }
 
     @Override
-    protected void onStart(){
+    protected void onStart() {
         super.onStart();
         eventDelegate.onStart();
         HybridStackManager.sharedInstance().curFlutterActivity = this;
@@ -226,11 +251,13 @@ public class FlutterWrapperActivity extends Activity implements PluginRegistry,V
         FrameLayout rootView = (FrameLayout) findViewById(R.id.flutter_rootview);
         XFlutterView flutterView = getFlutterView();
         ViewGroup priorParent = (ViewGroup) flutterView.getParent();
-        if(isFlutterViewAttachedOnMe())
+        if (isFlutterViewAttachedOnMe())
             eventDelegate.onStop();
         super.onStop();
-        if(super.isFinishing()){
-            HybridStackManager.sharedInstance().methodChannel.invokeMethod("popRouteNamed",curFlutterRouteName);
+        if (super.isFinishing()) {
+            XURLRouter.sActivityMap.remove(curFlutterRouteName);
+            XURLRouter.sActivityToFlutterPageName.remove(this);
+            HybridStackManager.sharedInstance().methodChannel.invokeMethod("popRouteNamed", curFlutterRouteName);
             if (priorParent == rootView) {
                 priorParent.removeView(flutterView);
             }
@@ -240,73 +267,77 @@ public class FlutterWrapperActivity extends Activity implements PluginRegistry,V
     @Override
     protected void onPostResume() {
         super.onPostResume();
-        if(isFlutterViewAttachedOnMe())
+        if (isFlutterViewAttachedOnMe())
             eventDelegate.onPostResume();
     }
 
     // @Override - added in API level 23
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        if(isFlutterViewAttachedOnMe())
+        if (isFlutterViewAttachedOnMe())
             eventDelegate.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(!(isFlutterViewAttachedOnMe() && eventDelegate.onActivityResult(requestCode, resultCode, data))){
+        if (!(isFlutterViewAttachedOnMe() && eventDelegate.onActivityResult(requestCode, resultCode, data))) {
             super.onActivityResult(requestCode, resultCode, data);
+        }
+        //这里加上是为了处理QQ登录的问题，真特么恶心
+        if (requestCode == 11101) {
+            if (XURLRouter.flutterActivityLifeCircleCallback != null) {
+                XURLRouter.flutterActivityLifeCircleCallback.onActivityResult(requestCode, resultCode, data);
+            }
         }
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
-        if(isFlutterViewAttachedOnMe())
+        if (isFlutterViewAttachedOnMe())
             eventDelegate.onNewIntent(intent);
     }
 
     @Override
     public void onUserLeaveHint() {
-        if(isFlutterViewAttachedOnMe())
+        if (isFlutterViewAttachedOnMe())
             eventDelegate.onUserLeaveHint();
     }
 
     @Override
     public void onTrimMemory(int level) {
-        if(isFlutterViewAttachedOnMe())
+        if (isFlutterViewAttachedOnMe())
             eventDelegate.onTrimMemory(level);
     }
 
     @Override
     public void onLowMemory() {
-        if(isFlutterViewAttachedOnMe())
+        if (isFlutterViewAttachedOnMe())
             eventDelegate.onLowMemory();
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        if(isFlutterViewAttachedOnMe())
+        if (isFlutterViewAttachedOnMe())
             eventDelegate.onConfigurationChanged(newConfig);
     }
 
     //ActivityDelegate Related
-    void checkIfInitActivityDelegate(){
-        if(nativeView==null){
+    void checkIfInitActivityDelegate() {
+        if (nativeView == null) {
             Intent intent = getIntent();
             Bundle bundle = intent.getExtras();
             Uri uri = intent.getData();
             HashMap arguments = new HashMap();
-            if(uri!=null){
-                arguments = HybridStackManager.assembleChanArgs(uri.toString(),null,null);
+            if (uri != null) {
+                arguments = HybridStackManager.assembleChanArgs(uri.toString(), null, (HashMap) bundle.get("params"));
+            } else if (bundle != null) {
+                arguments = HybridStackManager.assembleChanArgs(intent.getStringExtra("url"), (HashMap) intent.getSerializableExtra("query"), (HashMap) intent.getSerializableExtra("params"));
             }
-            else if(bundle!=null){
-                arguments = HybridStackManager.assembleChanArgs(intent.getStringExtra("url"),(HashMap)intent.getSerializableExtra("query"),(HashMap)intent.getSerializableExtra("params"));
-           }
             HybridStackManager.sharedInstance().mainEntryParams = arguments;
         }
-        if(delegate == null) {
+        if (delegate == null) {
             delegate = new XFlutterActivityDelegate(this, this);
-        }
-        else {
+        } else {
             delegate.resetActivity(this);
         }
         eventDelegate = delegate;
@@ -319,19 +350,31 @@ public class FlutterWrapperActivity extends Activity implements PluginRegistry,V
     }
 
     public void openUrl(String url) {
+        if (TextUtils.isEmpty(url)) return;
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < url.length(); i++) {
+            if (url.charAt(i) != '?') {
+                sb.append(url.charAt(i));
+            } else {
+                mCurrentPageUrl = sb.toString();
+                XURLRouter.sPageUrlList.add(mCurrentPageUrl);
+                XURLRouter.sActivityList.add(this);
+                break;
+            }
+        }
         HybridStackManager.sharedInstance().curFlutterActivity = null;
-        if(url.contains("flutter=true")){
+        if (url.contains("flutter=true")) {
             Intent intent = new Intent(FlutterWrapperActivity.this, FlutterWrapperActivity.class);
             intent.setAction(Intent.ACTION_RUN);
             intent.setData(Uri.parse(url));
             Uri tmpUri = Uri.parse(url);
             Set<String> set;
-            HashMap<String,String> params = new HashMap<>();
-            if (tmpUri!= null){
+            HashMap<String, String> params = new HashMap<>();
+            if (tmpUri != null) {
                 set = tmpUri.getQueryParameterNames();
-                if (null != set){
-                    for (String key : tmpUri.getQueryParameterNames()){
-                        params.put(key,tmpUri.getQueryParameter(key));
+                if (null != set) {
+                    for (String key : tmpUri.getQueryParameterNames()) {
+                        params.put(key, tmpUri.getQueryParameter(key));
                     }
                 }
                 intent.putExtra("params", params);
@@ -341,21 +384,21 @@ public class FlutterWrapperActivity extends Activity implements PluginRegistry,V
             Uri tmpUri = Uri.parse(url);
             String tmpUrl = String.format("%s://%s", tmpUri.getScheme(), tmpUri.getHost());
             HashMap query = new HashMap();
-            for(String key : tmpUri.getQueryParameterNames()){
-                query.put(key,tmpUri.getQueryParameter(key));
+            for (String key : tmpUri.getQueryParameterNames()) {
+                query.put(key, tmpUri.getQueryParameter(key));
             }
-            XURLRouter.sharedInstance().openUrlWithQueryAndParams(tmpUrl,query,null);
+            XURLRouter.sharedInstance().openUrlWithQueryAndParams(tmpUrl, query, null);
             saveFinishSnapshot(false);
         }
     }
 
-    public void innerStartActivity(Intent intent,boolean showSnapshot){
+    public void innerStartActivity(Intent intent, boolean showSnapshot) {
         this.startActivity(intent);
         saveFinishSnapshot(showSnapshot);
     }
 
     @Override
-    public void setCurFlutterRouteName(String curFlutterRouteName){
+    public void setCurFlutterRouteName(String curFlutterRouteName) {
         this.curFlutterRouteName = curFlutterRouteName;
     }
 
@@ -383,24 +426,25 @@ public class FlutterWrapperActivity extends Activity implements PluginRegistry,V
                 @Override
                 public void run() {
                     //Do something after delay of 20ms
-                    if (flutterView.getParent() == null && activity.isActive==true ) {
+                    if (flutterView.getParent() == null && activity.isActive == true) {
                         rootView.addView(flutterView, params);
                         flutterView.resetActivity(activity);
                     }
                 }
             }, 20);
-        }
-        else{
+        } else {
             rootView.addView(flutterView, params);
             flutterView.resetActivity(activity);
         }
     }
 
-    void saveFinishSnapshot(boolean showSnapshot){
+    void saveFinishSnapshot(boolean showSnapshot) {
         XFlutterView fv = getFlutterView();
         lastbitmap = fv.getBitmap();
-        fakeSnapImgView.setImageBitmap(lastbitmap);
-        if(showSnapshot)
-            fakeSnapImgView.setVisibility(View.VISIBLE);
+        if (lastbitmap != null) {
+            fakeSnapImgView.setImageBitmap(lastbitmap);
+            if (showSnapshot)
+                fakeSnapImgView.setVisibility(View.VISIBLE);
+        }
     }
 }
