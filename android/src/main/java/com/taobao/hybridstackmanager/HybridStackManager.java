@@ -112,8 +112,6 @@ public class HybridStackManager implements MethodCallHandler {
         if (call.method.equals("openUrlFromNative")) {
             HashMap openUrlInfo = (HashMap) call.arguments;
             String url = (String) openUrlInfo.get("url");
-            XURLRouter.sRecentPages[0] = XURLRouter.sRecentPages[1];
-            XURLRouter.sRecentPages[1] = url;
             HashMap query = (HashMap) openUrlInfo.get("query");
             HashMap params = (HashMap) openUrlInfo.get("params");
             String concatUrl = concatUrl(url, query, params);
@@ -181,12 +179,18 @@ public class HybridStackManager implements MethodCallHandler {
             String pageName = (String) call.arguments;
             XURLRouter.sActivityMap.put(pageName, curFlutterActivity);
             XURLRouter.sActivityToFlutterPageName.put(curFlutterActivity, pageName);
+            XURLRouter.sNativesLastFlutterPageName.put(pageName, pageName);
             Log.d("giaogiao", pageName);
         } else if (call.method.equals("registerOnBackPress")) {
             String pageName = (String) call.arguments;
             XURLRouter.sFlutterPageNameNeedingBlockOnBackPressed.add(pageName);
         } else if (call.method.equals("reusingMode")) {
             XURLRouter.sReusingMode = (Boolean) call.arguments;
+        } else if (call.method.equals("updateCurNativeFlutterStackSize")) {
+            HashMap map = (HashMap) call.arguments;
+            if (map == null) return;
+            XURLRouter.sFlutterStackSizeMap.put((String) map.get("pageName"), (int) map.get("stackSize"));
+            XURLRouter.sNativesLastFlutterPageName.put(XURLRouter.sActivityToFlutterPageName.get(curFlutterActivity), (String) map.get("pageName"));
         } else {
             result.notImplemented();
         }

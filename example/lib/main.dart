@@ -6,14 +6,11 @@ import 'my_app.dart';
 
 void main() async {
   AppConfig.sharedInstance();
-  HybridStackManagerPlugin plugin =
-      HybridStackManagerPlugin.hybridStackManagerPlugin;
+  StackManagerApis plugin = StackManagerApis.singleton;
   Map args = await plugin.getMainEntryParams();
   runApp(new MyApp());
   if (args != null && args["url"] != null) {
-    RouterOption routeOption = new RouterOption(
-        url: args["url"], query: args["query"], params: args["params"]);
-    Router.sharedInstance().pushPageWithOptionsFromFlutter(
-        routeOption: routeOption, animated: false);
+    RouterOption routeOption = new RouterOption(url: args["url"], query: args["query"], params: args["params"]);
+    Router.sharedInstance().pushPageWithOptionsFromFlutter(routeOption: routeOption, animated: false);
   }
 }

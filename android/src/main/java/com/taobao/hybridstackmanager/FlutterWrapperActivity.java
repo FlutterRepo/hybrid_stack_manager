@@ -174,7 +174,10 @@ public class FlutterWrapperActivity extends Activity implements PluginRegistry, 
         HybridStackManager.sharedInstance().curFlutterActivity = this;
         isActive = true;
         if (curFlutterRouteName != null && curFlutterRouteName.length() > 0) {
+            //回到当前页面的时候相应的把flutter的navigator里的页面退回到当前routeName的地方
+//            if (XURLRouter.sFlutterStackSizeMap.containsKey(curFlutterRouteName) && XURLRouter.sFlutterStackSizeMap.get(curFlutterRouteName) != 0) return;
             HybridStackManager.sharedInstance().methodChannel.invokeMethod("popToRouteNamed", curFlutterRouteName);
+//            HybridStackManager.sharedInstance().methodChannel.invokeMethod("popToRouteNamed", XURLRouter.sNativesLastFlutterPageName.get(curFlutterRouteName));
         }
     }
 
@@ -206,7 +209,7 @@ public class FlutterWrapperActivity extends Activity implements PluginRegistry, 
     @Override
     public void onBackPressed() {
         Log.d("giao", "--onBackPressed--");
-        Log.d("giao", XURLRouter.sActivityToFlutterPageName.get(this));
+//        Log.d("giao", XURLRouter.sActivityToFlutterPageName.get(this));
         if (!XURLRouter.sReusingMode) {
             if (XURLRouter.sFlutterPageNameNeedingBlockOnBackPressed.contains(XURLRouter.sActivityToFlutterPageName.get(this))) {
                 HybridStackManager.sharedInstance().methodChannel.invokeMethod("pleaseHandleOnBackPressed", XURLRouter.sActivityToFlutterPageName.get(this));
@@ -271,12 +274,6 @@ public class FlutterWrapperActivity extends Activity implements PluginRegistry, 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (!(isFlutterViewAttachedOnMe() && eventDelegate.onActivityResult(requestCode, resultCode, data))) {
             super.onActivityResult(requestCode, resultCode, data);
-        }
-        //这里加上是为了处理QQ登录的问题，真特么恶心
-        if (requestCode == 11101) {
-            if (XURLRouter.flutterActivityLifeCircleCallback != null) {
-                XURLRouter.flutterActivityLifeCircleCallback.onActivityResult(requestCode, resultCode, data);
-            }
         }
     }
 

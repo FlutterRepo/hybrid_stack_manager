@@ -6,8 +6,8 @@ import 'package:hybrid_stack_manager/hybrid_stack_manager_plugin.dart';
 
 typedef Future<dynamic> MethodHandler(MethodCall call);
 
-class HybridStackManagerPlugin {
-  static HybridStackManagerPlugin hybridStackManagerPlugin = new HybridStackManagerPlugin._internal();
+class StackManagerApis {
+  static StackManagerApis singleton = new StackManagerApis._internal();
   MethodChannel _channel;
   MethodHandler _handler;
 
@@ -16,11 +16,15 @@ class HybridStackManagerPlugin {
     _channel.setMethodCallHandler(_handler);
   }
 
-  HybridStackManagerPlugin._internal() {
+  StackManagerApis._internal() {
     _channel = new MethodChannel('hybrid_stack_manager');
   }
 
   openUrlFromNative({String url, Map query, Map params, bool animated}) {
+    print("=v= openUrlFromNative, current stack size: ${Router.singleton.buildContextStack.length}");
+
+    ///打开native页面时关掉reusing mode，否则native可能无法返回
+    _channel.invokeMethod("reusingMode", false);
     _channel.invokeMethod("openUrlFromNative", {"url": url ?? "", "query": (query ?? {}), "params": (params ?? {}), "animated": animated ?? true});
   }
 
@@ -32,6 +36,7 @@ class HybridStackManagerPlugin {
       ///如果flutter页面数量大于0个（注意，Native页面中的第一个Flutter页面的context不存入stack），开启复用模式，保证android拦截返回键
       _channel.invokeMethod("reusingMode", true);
     }
+    _channel.invokeMethod("updateCurNativeFlutterStackSize", {"pageName": Utils.lastGeneratedPageName, "stackSize": Router.singleton.buildContextStack.length});
     print("=v= adding page, current stack size: ${Router.singleton.buildContextStack.length}");
     Navigator.push(
       context,
@@ -46,6 +51,7 @@ class HybridStackManagerPlugin {
   ///在原有的Native页面上直接返回上一个flutter页面，Android物理返回键也调用这个
   popFlutterPageDirectly() {
     Navigator.pop(Router.singleton.buildContextStack.removeLast(), "携带的参数");
+    _channel.invokeMethod("updateCurNativeFlutterStackSize", {"pageName": Utils.lastGeneratedPageName, "stackSize": Router.singleton.buildContextStack.length});
     print("=v= poping page, current stack size: ${Router.singleton.buildContextStack.length}");
 
     ///如果flutter页面数量小于等于0个，让android接管返回键

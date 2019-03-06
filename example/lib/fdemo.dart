@@ -20,7 +20,7 @@ class FDemoWidget extends StatelessWidget {
           leading: new GestureDetector(
               child: new Icon(Icons.arrow_back),
               onTap: () {
-                HybridStackManagerPlugin.hybridStackManagerPlugin.popCurPage();
+                StackManagerApis.singleton.popCurPage();
               }),
           title: new Text(map == null ? pageName : "Individual Native(${map["id"]})"),
         ),
@@ -35,20 +35,19 @@ class FDemoWidget extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
                 onTap: () {
-                  HybridStackManagerPlugin.hybridStackManagerPlugin
-                      .openFlutterPageDirectly(context, FDemoWidget(pageName: Utils.generateUniquePageName("Reused Native")));
+                  StackManagerApis.singleton.openFlutterPageDirectly(context, FDemoWidget(pageName: Utils.generateUniquePageName("Reused Native")));
                 },
               ),
               new InkWell(
                 child: new Text("Click to open new native FlutterPage\n(打开一个单独的Native页面装载flutter页面)", textAlign: TextAlign.center),
                 onTap: () {
-                  HybridStackManagerPlugin.hybridStackManagerPlugin.openUrlFromNative(url: "hrd://fdemo", query: {"flutter": true});
+                  StackManagerApis.singleton.openUrlFromNative(url: "hrd://fdemo", query: {"flutter": true});
                 },
               ),
               new InkWell(
                 child: new Text("Click to open NativePage\n(打开Native页面)", textAlign: TextAlign.center),
                 onTap: () {
-                  HybridStackManagerPlugin.hybridStackManagerPlugin.openUrlFromNative(url: "hrd://ndemo");
+                  StackManagerApis.singleton.openUrlFromNative(url: "hrd://ndemo");
                 },
               )
             ],

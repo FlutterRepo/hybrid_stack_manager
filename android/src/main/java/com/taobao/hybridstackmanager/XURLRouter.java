@@ -18,15 +18,16 @@ public class XURLRouter {
     static XURLRouter sRouterInst;
     Context mAppContext;
     XURLRouterHandler mNativeRouterHandler;
-    public static boolean sReusingMode = true;
-    static FlutterActivityLifeCircleCallback flutterActivityLifeCircleCallback;
+    public static boolean sReusingMode = false;
     public static Map<String, FlutterActivityChecker> sActivityMap = new LinkedHashMap<>();
     public static Map<FlutterActivityChecker, String> sActivityToFlutterPageName = new HashMap<>();
     public static Set<String> sFlutterPageNameNeedingBlockOnBackPressed = new HashSet<>();
     public static List<Activity> sActivityList = new ArrayList<>();
     public static List<String> sPageUrlList = new ArrayList<>();
-    ///记录着最近的两个Page，包括当前页面
-    public static String[] sRecentPages = new String[2];
+    public static Map<String, Integer> sFlutterStackSizeMap = new HashMap<>();
+    public static Map<String, String> sNativesLastFlutterPageName = new HashMap<>();
+    ///记录着访问的页面的hash和埋点title
+    public static Map<String, String> sUrlToPageTitleMap = new LinkedHashMap<>();
 
     public static XURLRouter sharedInstance() {
         if (sRouterInst == null) {
@@ -64,9 +65,5 @@ public class XURLRouter {
             mAppContext.startActivity(intent);
         }
         return false;
-    }
-
-    public void setFlutterActivityLifeCircleCallback(FlutterActivityLifeCircleCallback lifeCircleCallback) {
-        flutterActivityLifeCircleCallback = lifeCircleCallback;
     }
 }

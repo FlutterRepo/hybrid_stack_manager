@@ -45,7 +45,7 @@ class Router extends Object {
   }
 
   Router._internal() {
-    HybridStackManagerPlugin.hybridStackManagerPlugin.setMethodCallHandler((MethodCall methodCall) {
+    StackManagerApis.singleton.setMethodCallHandler((MethodCall methodCall) {
       String method = methodCall.method;
       if (method == "openURLFromFlutter") {
         Map args = methodCall.arguments;
@@ -70,7 +70,7 @@ class Router extends Object {
           onBackPressedCallback();
         }
       } else if (method == "reusingModeOnBackPressed") {
-        HybridStackManagerPlugin.hybridStackManagerPlugin.popFlutterPageDirectly();
+        StackManagerApis.singleton.popFlutterPageDirectly();
       }
     });
   }
@@ -130,9 +130,9 @@ class Router extends Object {
           });
 
       Navigator.of(globalKeyForRouter.currentContext).push(pageRoute);
-      HybridStackManagerPlugin.hybridStackManagerPlugin.updateCurFlutterRoute(routeOption.userInfo);
+      StackManagerApis.singleton.updateCurFlutterRoute(routeOption.userInfo);
     } else {
-      HybridStackManagerPlugin.hybridStackManagerPlugin.openUrlFromNative(url: routeOption.url, query: routeOption.query, params: routeOption.params);
+      StackManagerApis.singleton.openUrlFromNative(url: routeOption.url, query: routeOption.query, params: routeOption.params);
     }
     NavigatorState navState = Navigator.of(globalKeyForRouter.currentContext);
     List<Route<dynamic>> navHistory = navState.history;
@@ -157,8 +157,7 @@ class Router extends Object {
   }
 
   pushPageWithOptionsFromNative({RouterOption routeOption, bool animated}) {
-    HybridStackManagerPlugin.hybridStackManagerPlugin
-        .openUrlFromNative(url: routeOption.url, query: routeOption.query, params: routeOption.params, animated: animated);
+    StackManagerApis.singleton.openUrlFromNative(url: routeOption.url, query: routeOption.query, params: routeOption.params, animated: animated);
   }
 
   pageFromOption({RouterOption routeOption, Key key}) {
@@ -166,8 +165,16 @@ class Router extends Object {
       currentPageUrl = routeOption.url + "?" + convertUrl(routeOption.query);
     } catch (e) {}
     routeOption.userInfo = Utils.generateUniquePageName(routeOption.url);
-    HybridStackManagerPlugin.hybridStackManagerPlugin.associatePageNameWithActivity(routeOption.userInfo);
+    StackManagerApis.singleton.associatePageNameWithActivity(routeOption.userInfo);
     if (routerWidgetHandler != null) return routerWidgetHandler(routeOption: routeOption, key: key);
+  }
+
+  originPush(PageRoute route) {
+    Navigator.of(globalKeyForRouter.currentContext).push(route);
+  }
+
+  originPop() {
+    Navigator.of(globalKeyForRouter.currentContext).pop();
   }
 
   static String convertUrl(Map query) {
