@@ -16,7 +16,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.taobao.hybridstackmanager.XFlutterActivityDelegate.ViewFactory;
-import com.taobao.hybridstackmanager.report.DataReportManager;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -162,15 +161,6 @@ public class FlutterWrapperActivity extends Activity implements PluginRegistry, 
             HybridStackManager.sharedInstance().openUrlFromFlutter(intent.getStringExtra("url"), (HashMap) intent.getSerializableExtra("query"), (HashMap) intent.getSerializableExtra("params"));
         }
         flutterWrapperInstCnt++;
-        //临时增加数据上报逻辑
-        if (uri != null) {
-            String pageName = uri.getHost();
-            HashMap<String, String> reportParams = new HashMap<>();
-            reportParams.put("page", pageName);
-            reportParams.put("event", "kingofpron_page_show");
-            reportParams.put("from_page", XURLRouter.sRecentPages[0]);
-            DataReportManager.getInstance().reportData(reportParams);
-        }
     }
 
 

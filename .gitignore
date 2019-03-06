@@ -1,9 +1,12 @@
 *.iml
 .gradle
 /local.properties
-/.idea
+.idea
 .DS_Store
 /build
 /captures
 pubspec.lock
 .packages
+example/.idea
+example/android/.idea/
+android/.idea/
