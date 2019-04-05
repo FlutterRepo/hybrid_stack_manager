@@ -1,6 +1,7 @@
 class Utils extends Object {
   static int baseId = 100;
   static String pageNameSeperatorToken = "_";
+  static String lastGeneratedPageName = "";
 
   static int generatePrimaryPageId() {
     return baseId++;
@@ -13,8 +14,7 @@ class Utils extends Object {
   }
 
   static String generateUniquePageName(String pageName) {
-    return (pageName ?? "") +
-        pageNameSeperatorToken +
-        generatePrimaryPageId().toString();
+    lastGeneratedPageName = (pageName ?? "") + pageNameSeperatorToken + generatePrimaryPageId().toString();
+    return lastGeneratedPageName;
   }
 }

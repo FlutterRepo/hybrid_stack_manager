@@ -48,7 +48,7 @@ import io.flutter.app.FlutterActivityEvents;
  * <p>To wire this class up to your activity, simply forward the events defined
  * in {@link FlutterActivityEvents} from your activity to an instance of this
  * class. Optionally, you can make your activity implement
- * {@link PluginRegistry} and/or {@link io.flutter.view.FlutterView.Provider}
+ * {@link PluginRegistry} and/or {@link FlutterView.Provider}
  * and forward those methods to this class as well.</p>
  */
 public final class XFlutterActivityDelegate

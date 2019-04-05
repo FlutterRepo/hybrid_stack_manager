@@ -3,63 +3,57 @@ import 'package:hybrid_stack_manager/hybrid_stack_manager_plugin.dart';
 
 class FDemoWidget extends StatelessWidget {
   RouterOption routeOption;
-  FDemoWidget(RouterOption option, {Key key}) : super(key: key) {
-    routeOption = option;
+  String pageName;
+
+  FDemoWidget({String pageName, RouterOption option, Key key}) : super(key: key) {
+    this.routeOption = option;
+    this.pageName = pageName;
   }
+
   Widget build(BuildContext context) {
-    Map m = Utils.parseUniquePageName(routeOption.userInfo);
+    Map map;
+    if (routeOption != null && routeOption.userInfo != null) {
+      map = Utils.parseUniquePageName(routeOption.userInfo);
+    }
     return new Scaffold(
         appBar: new AppBar(
           leading: new GestureDetector(
               child: new Icon(Icons.arrow_back),
               onTap: () {
-                HybridStackManagerPlugin.hybridStackManagerPlugin.popCurPage();
+                StackManagerApis.singleton.popCurPage();
               }),
-          // Here we take the value from the MyHomePage object that was created by
-          // the App.build method, and use it to set our appbar title.
-          title: new Text("Flutter Page(${m["id"]})"),
+          title: new Text(map == null ? pageName : "Individual Native(${map["id"]})"),
         ),
-        body: new Center(
-          // Center is a layout widget. It takes a single child and positions it
-          // in the middle of the parent.
+        body: Container(
+          width: MediaQuery.of(context).size.width,
           child: new Column(
-            // Column is also layout widget. It takes a list of children and
-            // arranges them vertically. By default, it sizes itself to fit its
-            // children horizontally, and tries to be as tall as its parent.
-            //
-            // Invoke "debug paint" (press "p" in the console where you ran
-            // "flutter run", or select "Toggle Debug Paint" from the Flutter tool
-            // window in IntelliJ) to see the wireframe for each widget.
-            //
-            // Column has various properties to control how it sizes itself and
-            // how it positions its children. Here we use mainAxisAlignment to
-            // center the children vertically; the main axis here is the vertical
-            // axis because Columns are vertical (the cross axis would be
-            // horizontal).
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              new SizedBox(width: 1.0, height: 100.0),
-              new GestureDetector(
-                child: new Text("Click to open FlutterPage"),
+              new InkWell(
+                child: new Text(
+                  "Click to open reused FlutterPage\n(在原有的Native页面装载flutter页面)",
+                  textAlign: TextAlign.center,
+                ),
                 onTap: () {
-                  HybridStackManagerPlugin.hybridStackManagerPlugin
-                      .openUrlFromNative(
-                          url: "hrd://fdemo", query: {"flutter": true});
+                  StackManagerApis.singleton.openFlutterPageDirectly(context, FDemoWidget(pageName: Utils.generateUniquePageName("Reused Native")));
                 },
               ),
-              new SizedBox(width: 1.0, height: 100.0),
-              new GestureDetector(
-                child: new Text("Click to open NativePage"),
+              new InkWell(
+                child: new Text("Click to open new native FlutterPage\n(打开一个单独的Native页面装载flutter页面)", textAlign: TextAlign.center),
                 onTap: () {
-                  HybridStackManagerPlugin.hybridStackManagerPlugin
-                      .openUrlFromNative(url: "hrd://ndemo");
+                  StackManagerApis.singleton.openUrlFromNative(url: "hrd://fdemo", query: {"flutter": true});
+                },
+              ),
+              new InkWell(
+                child: new Text("Click to open NativePage\n(打开Native页面)", textAlign: TextAlign.center),
+                onTap: () {
+                  StackManagerApis.singleton.openUrlFromNative(url: "hrd://ndemo");
                 },
               )
             ],
           ),
         ),
-        floatingActionButton:
-            null // This trailing comma makes auto-formatting nicer for build methods.
+        floatingActionButton: null // This trailing comma makes auto-formatting nicer for build methods.
         );
   }
 }

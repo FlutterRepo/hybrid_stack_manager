@@ -28,38 +28,38 @@ public class XFlutterView extends FlutterView
                 super(context,attrs,nativeView);
             }
             public void registerReceiver() {
-                try {
-                    //Register Receiver
-                    Field privateField0 = FlutterView.class.getDeclaredField("mDiscoveryReceiver");
-                    privateField0.setAccessible(true);
-                    BroadcastReceiver mDiscoveryReceiver = (BroadcastReceiver) privateField0.get(this);
-                    if (mDiscoveryReceiver != null) {
-                        if ((getContext().getApplicationInfo().flags & 2) != 0 && mDiscoveryReceiver != null) {
-                            getContext().registerReceiver(mDiscoveryReceiver, new IntentFilter("io.flutter.view.DISCOVER"));
-                        }
-                    }
-                } catch (NoSuchFieldException e) {
-                    e.printStackTrace();
-                }
-                catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                }
+//                try {
+//                    //Register Receiver
+//                    Field privateField0 = FlutterView.class.getDeclaredField("mDiscoveryReceiver");
+//                    privateField0.setAccessible(true);
+//                    BroadcastReceiver mDiscoveryReceiver = (BroadcastReceiver) privateField0.get(this);
+//                    if (mDiscoveryReceiver != null) {
+//                        if ((getContext().getApplicationInfo().flags & 2) != 0 && mDiscoveryReceiver != null) {
+//                            getContext().registerReceiver(mDiscoveryReceiver, new IntentFilter("io.flutter.view.DISCOVER"));
+//                        }
+//                    }
+//                } catch (NoSuchFieldException e) {
+//                    e.printStackTrace();
+//                }
+//                catch (IllegalAccessException e) {
+//                    e.printStackTrace();
+//                }
             }
             public void unregisterReceiver(){
-                try {
-                    //UnRegister Receiver
-                    Field privateField0 = FlutterView.class.getDeclaredField("mDiscoveryReceiver");
-                    privateField0.setAccessible(true);
-                    BroadcastReceiver mDiscoveryReceiver = (BroadcastReceiver)privateField0.get(this);
-                    if (mDiscoveryReceiver != null) {
-                        this.getContext().unregisterReceiver(mDiscoveryReceiver);
-                    }
-                } catch (NoSuchFieldException e) {
-                    e.printStackTrace();
-                }
-                catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                }
+//                try {
+//                    //UnRegister Receiver
+//                    Field privateField0 = FlutterView.class.getDeclaredField("mDiscoveryReceiver");
+//                    privateField0.setAccessible(true);
+//                    BroadcastReceiver mDiscoveryReceiver = (BroadcastReceiver)privateField0.get(this);
+//                    if (mDiscoveryReceiver != null) {
+//                        this.getContext().unregisterReceiver(mDiscoveryReceiver);
+//                    }
+//                } catch (NoSuchFieldException e) {
+//                    e.printStackTrace();
+//                }
+//                catch (IllegalAccessException e) {
+//                    e.printStackTrace();
+//                }
             }
             public void resetActivity(Activity activity){
                 try {

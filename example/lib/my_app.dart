@@ -4,6 +4,7 @@ import 'app_config.dart';
 
 class MyApp extends StatefulWidget {
   MyApp();
+
   State<StatefulWidget> createState() {
     return new MyAppState();
   }
